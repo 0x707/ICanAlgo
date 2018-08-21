@@ -100,18 +100,21 @@ void Heroes::removeElement(unsigned index)
 {
 	isIndexInRange(index);
 
-	sHero* new_smaller_list = new sHero[size_ - 1];
-	sHero* old_list_holder = heroes_list_;
-	for (unsigned i = 0, j = 0; j < size_ - 1; ++i, ++j) {
-		if (i != index || size_ == 1)
-			new_smaller_list[j] = old_list_holder[i];
-		else
-			new_smaller_list[j] = old_list_holder[++i];
+	if (size_ > 1) {
+		sHero* new_smaller_list = new sHero[size_ - 1];
+		sHero* old_list_holder = heroes_list_;
+		for (unsigned i = 0, j = 0; j < size_ - 1; ++i, ++j) {
+			if (i != index || size_ == 1)
+				new_smaller_list[j] = old_list_holder[i];
+			else
+				new_smaller_list[j] = old_list_holder[++i];
+		}
+
+		heroes_list_ = new_smaller_list;
+		delete[] old_list_holder;
 	}
 
-	heroes_list_ = new_smaller_list;
-	delete[] old_list_holder;
-	size_ -= 1;
+	--size_;
 }
 
 void Heroes::printHeroesList() const
@@ -133,14 +136,14 @@ Heroes selectionSort(Heroes&& heroes)
 	unsigned index = 0;
 
 	while (heroes.size() != 0) {
-		sHero max_level = heroes[0];
-		for (unsigned i = 0; i < heroes.size() - 1; ++i) {
-			if (max_level <= heroes[i]) {
-				max_level = heroes[i];
+		sHero min_level = heroes[0];
+		for (unsigned i = 0; i < heroes.size(); ++i) {
+			if (min_level >= heroes[i]) {
+				min_level = heroes[i];
 				value_to_remove = i;
 			}
 		}
-		sorted_heroes[index++] = max_level;
+		sorted_heroes[index++] = min_level;
 		heroes.removeElement(value_to_remove);
 	}
 
@@ -159,9 +162,7 @@ int main()
 
 		std::cout << std::endl;
 
-		selectionSort({
-			{ "Jaina", 25 },{ "Sonya", 64 },{ "Junkrat", 36 },
-			{ "Genji", 100 },{ "Valla", 70 },{ "Maiev", 10 } }
+		selectionSort(std::move(heroes)
 		).printHeroesList();
 	}
 	catch (const std::out_of_range& err) {
