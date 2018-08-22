@@ -34,7 +34,7 @@ public:
 	Heroes(const sHero*, unsigned size);
 	Heroes(const std::initializer_list<sHero>&);
 	~Heroes() { delete[] heroes_list_; }
-	Heroes(Heroes&&);
+	Heroes(Heroes&&) noexcept;
 
 	Heroes(const Heroes&) = delete;
 	Heroes& operator=(const Heroes&) = delete;
@@ -76,7 +76,7 @@ Heroes::Heroes(const std::initializer_list<sHero>& heroes)
 		heroes_list_[++index] = elem;
 }
 
-Heroes::Heroes(Heroes&& other)
+Heroes::Heroes(Heroes&& other) noexcept
 	: heroes_list_{ other.heroes_list_ }
 	, size_{ other.size_ }
 {
@@ -129,22 +129,28 @@ void Heroes::isIndexInRange(unsigned index) const
 		throw std::out_of_range("Index out of range");
 }
 
+unsigned findLowestLevel(const Heroes& heroes)
+{
+	sHero lowest_level = heroes[0];
+	unsigned lowest_level_index = 0;
+	for (unsigned i = 0; i < heroes.size(); ++i) {
+		if (lowest_level >= heroes[i]) {
+			lowest_level = heroes[i];
+			lowest_level_index = i;
+		}
+	}
+	return lowest_level_index;
+}
+
 Heroes selectionSort(Heroes&& heroes)
 {
 	Heroes sorted_heroes{ heroes.size() };
-	unsigned value_to_remove = 0;
-	unsigned index = 0;
+	unsigned lowest_level, index = 0;
 
 	while (heroes.size() != 0) {
-		sHero min_level = heroes[0];
-		for (unsigned i = 0; i < heroes.size(); ++i) {
-			if (min_level >= heroes[i]) {
-				min_level = heroes[i];
-				value_to_remove = i;
-			}
-		}
-		sorted_heroes[index++] = min_level;
-		heroes.removeElement(value_to_remove);
+		lowest_level = findLowestLevel(heroes);
+		sorted_heroes[index++] = heroes[lowest_level];
+		heroes.removeElement(lowest_level);
 	}
 
 	return sorted_heroes;
