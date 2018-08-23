@@ -9,7 +9,7 @@ struct sNode
 class Stack
 {
 public:
-	Stack() : peak_{ nullptr }, elements_numer_{ 0 } {}
+	Stack() : peak_{ nullptr }, elements_number_{ 0 } {}
 	~Stack();
 
 	Stack(const Stack&) = delete;
@@ -24,7 +24,7 @@ public:
 	int getPeakValue() const;
 private:
 	sNode * peak_;
-	unsigned elements_numer_;
+	unsigned elements_number_;
 	friend void printStack(const Stack&);
 };
 
@@ -45,7 +45,7 @@ unsigned Stack::push(int value)
 		new_node->other_node = peak_;
 	peak_ = new_node;
 
-	return ++elements_numer_;
+	return ++elements_number_;
 }
 
 unsigned Stack::pop()
@@ -54,7 +54,7 @@ unsigned Stack::pop()
 		sNode* node_to_remove = peak_;
 		peak_ = peak_->other_node;
 		delete node_to_remove;
-		return --elements_numer_;
+		return --elements_number_;
 	}
 	throw std::domain_error("Error: empty stack");
 }
