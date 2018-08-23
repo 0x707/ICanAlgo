@@ -63,10 +63,7 @@ int Stack::popAndGet()
 {
 	if (peak_ != nullptr) {
 		int former_peak_value = getPeakValue();
-		sNode* node_to_remove = peak_;
-		peak_ = peak_->other_node;
-		delete node_to_remove;
-
+		pop();
 		return former_peak_value;
 	}
 	throw std::domain_error("Error: empty stack");
